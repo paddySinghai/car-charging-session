@@ -1,6 +1,7 @@
 package com.everon.carchargingsession.controller;
 
 import com.everon.carchargingsession.dto.CarChargingDetailsDto;
+import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.exception.CarChargingBusinessException;
 import com.everon.carchargingsession.service.CarChargingService;
 import io.swagger.annotations.ApiOperation;
@@ -55,7 +56,8 @@ public class CarChargingController {
       value = "/summary",
       headers = "Accept=application/json",
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public Object retrieveSummaryOfChargingSession() throws CarChargingBusinessException {
+  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
+      throws CarChargingBusinessException {
     return carChargingService.retrieveSummaryOfChargingSession();
   }
 }

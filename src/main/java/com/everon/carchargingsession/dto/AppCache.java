@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** In-Memory Cache Object for Storing Car charging sessions details */
@@ -15,5 +16,5 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 public final class AppCache {
 
-  private Map<String, CarChargingDetailsDto> carChargingDetailsMap = new ConcurrentHashMap<>();
+  private Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = new ConcurrentHashMap<>();
 }

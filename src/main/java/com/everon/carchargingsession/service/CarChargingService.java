@@ -1,11 +1,16 @@
 package com.everon.carchargingsession.service;
 
 import com.everon.carchargingsession.dto.CarChargingDetailsDto;
+import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.exception.CarChargingBusinessException;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service Interface containing methods to start,stop,retrieve session details and summary for
+ * various car charging sessions
+ */
 public interface CarChargingService {
   /**
    * Method to Submit a new charging session for the station
@@ -41,8 +46,9 @@ public interface CarChargingService {
   /**
    * Method to Retrieve summary of submitted charging sessions
    *
-   * @return summary of Submitted charging sessions
+   * @return carChargingSummaryDto - CarChargingSummaryDto - summary of Submitted charging sessions
    * @throws CarChargingBusinessException throws CarChargingBusinessException
    */
-  public Object retrieveSummaryOfChargingSession() throws CarChargingBusinessException;
+  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
+      throws CarChargingBusinessException;
 }
