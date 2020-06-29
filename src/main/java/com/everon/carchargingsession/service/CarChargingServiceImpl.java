@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CarChargingServiceImpl implements CarChargingService {
-  private final AppCache appCache = new AppCache();
+  AppCache appCache = AppCache.getAppCache();
 
   @Override
   public CarChargingDetailsDto submitNewChargingSession(String stationId)
       throws CarChargingBusinessException {
 
-    Map<UUID, CarChargingDetailsDto> CarChargingDetailsMap = appCache.getCarChargingDetailsMap();
+    Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
     CarChargingDetailsDto carChargingDetailsDto =
         HelperUtil.prepareChargingSessionDetailsInput(stationId);
 
-    CarChargingDetailsMap.put(carChargingDetailsDto.getId(), carChargingDetailsDto);
+    carChargingDetailsMap.put(carChargingDetailsDto.getId(), carChargingDetailsDto);
 
     return carChargingDetailsDto;
   }
@@ -69,15 +69,14 @@ public class CarChargingServiceImpl implements CarChargingService {
     return chargingDetailsDtoList;
   }
 
-  @Override
-  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
+  @Override  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
       throws CarChargingBusinessException {
     Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
     if (null == carChargingDetailsMap || carChargingDetailsMap.isEmpty()) {
-      throw new CarChargingBusinessException("NO_SUBMITTED_SESSIONS", "No sessions foung!");
+      throw new CarChargingBusinessException("NO_SUBMITTED_SESSIONS", "No sessions found!");
     }
 
-    long totalCount = carChargingDetailsMap.entrySet().stream().count();
+    long totalCount = carChargingDetailsMap.size();
     long stoppedCount =
         carChargingDetailsMap.entrySet().stream()
             .filter(x -> x.getValue().getStatus().equals(StatusEnum.FINISHED))
