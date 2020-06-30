@@ -1,7 +1,12 @@
-version: "3.8"
+version: "3.7"
 services:
-  myservice:
+  car-charging-session:
+    build:
+      context: ./
+      dockerfile: Dockerfile
     image: car-charging-session:0.0.1
-     
+    ports:
+      - 9000:9000
+
       
 

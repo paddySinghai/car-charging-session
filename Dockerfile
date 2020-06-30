@@ -14,7 +14,7 @@ COPY pom.xml /home/app
 
 # Build app
 #RUN mvn -f /home/app/pom.xml -s /home/app/settings.xml clean package
-RUN mvn -f /home/app/pom.xml clean package
+RUN mvn -f home/app/pom.xml clean package
 
 
 ##########################################################################################
