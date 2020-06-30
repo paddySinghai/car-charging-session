@@ -28,17 +28,19 @@ public class CarSessionSummaryRepositoryImpl implements CarSessionSummaryReposit
 
   @Override
   public void updateStoppedSessions(final CarChargingDetailsDto chargingSession) {
-
+    inProgressSessions.invalidate(chargingSession.getId());
     stoppedSessions.put(chargingSession.getId(), chargingSession);
   }
 
   @Override
   public long getInProgressSessionCount() {
+    inProgressSessions.cleanUp();
     return inProgressSessions.size();
   }
 
   @Override
   public long getStoppedSessionCount() {
+    stoppedSessions.cleanUp();
     return stoppedSessions.size();
   }
 }
