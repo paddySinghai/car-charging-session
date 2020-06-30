@@ -1,17 +1,17 @@
 package com.everon.carchargingsession.repository;
 
+import com.everon.carchargingsession.dto.AppCache;
 import com.everon.carchargingsession.dto.CarChargingDetailsDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class CarChargingSessionRepositoryImpl implements CarChargingSessionRepository {
   private final Map<UUID, CarChargingDetailsDto> chargingSessions;
 
   public CarChargingSessionRepositoryImpl() {
-    chargingSessions = new ConcurrentHashMap<>();
+    chargingSessions = AppCache.getAppCache().getCarChargingDetailsMap();
   }
 
   @Override

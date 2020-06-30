@@ -22,7 +22,7 @@ public final class AppCache {
     stoppedSessions = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
   }
 
-  public void clearCache(Map<UUID, CarChargingDetailsDto> carChargingDetailsMap) {
+  public void clearCache() {
     synchronized (carChargingDetailsMap) {
       carChargingDetailsMap.clear();
     }
