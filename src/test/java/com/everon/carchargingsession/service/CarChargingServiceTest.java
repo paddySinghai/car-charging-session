@@ -31,17 +31,12 @@ public class CarChargingServiceTest {
   @Mock CarSessionSummaryRepository carSessionSummaryRepository;
 
   @DisplayName("Test method to submit a new charging session")
-  // @Test
+  @Test
   public void testSubmitNewChargingSession() {
     // Arrange
-
     CarChargingDetailsDto actualValue = HelperUtil.prepareChargingSessionDetailsInput("abc-123");
 
-    Mockito.when(carSessionSummaryRepository.updateInProgressSessions(actualValue))
-        .thenReturn(actualValue);
-
-    Mockito.when(carChargingSessionRepository.save(actualValue))
-        .thenReturn(any(CarChargingDetailsDto.class));
+    Mockito.when(carChargingSessionRepository.save(any())).thenReturn(actualValue);
 
     // Act
     CarChargingDetailsDto outputDto = carChargingService.submitNewChargingSession("abc-123");
@@ -61,8 +56,7 @@ public class CarChargingServiceTest {
 
     Mockito.when(carChargingSessionRepository.findById(inputUUID))
         .thenReturn(Optional.of(actualValue));
-    Mockito.when(carSessionSummaryRepository.updateStoppedSessions(actualValue))
-        .thenReturn(actualValue);
+
     Mockito.when(carChargingSessionRepository.save(actualValue)).thenReturn(actualValue);
 
     // Act

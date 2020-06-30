@@ -19,22 +19,18 @@ public class CarSessionSummaryRepositoryImpl implements CarSessionSummaryReposit
   }
 
   @Override
-  public CarChargingDetailsDto updateInProgressSessions(
-      final CarChargingDetailsDto chargingSession) {
+  public void updateInProgressSessions(final CarChargingDetailsDto chargingSession) {
 
     if (StatusEnum.IN_PROGRESS.equals(chargingSession.getStatus())) {
       inProgressSessions.put(chargingSession.getId(), chargingSession);
     }
-    return chargingSession;
   }
 
   @Override
-  public CarChargingDetailsDto updateStoppedSessions(final CarChargingDetailsDto chargingSession) {
+  public void updateStoppedSessions(final CarChargingDetailsDto chargingSession) {
 
     inProgressSessions.invalidate(chargingSession.getId());
     stoppedSessions.put(chargingSession.getId(), chargingSession);
-
-    return chargingSession;
   }
 
   @Override

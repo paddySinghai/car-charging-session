@@ -7,25 +7,25 @@ public interface CarSessionSummaryRepository {
    * Method to add ongoing session object in the guava cache
    *
    * @param chargingSession - CarChargingDetailsDto - session Object
-   * @return chargingSession - CarChargingDetailsDto - Object stored in cache
    */
-  CarChargingDetailsDto updateInProgressSessions(CarChargingDetailsDto chargingSession);
+  void updateInProgressSessions(CarChargingDetailsDto chargingSession);
   /**
    * Method to add stopped/terminated session object in the guava cache
    *
    * @param chargingSession - CarChargingDetailsDto - session Object
-   * @return chargingSession - CarChargingDetailsDto - Object stored in cache
    */
-  CarChargingDetailsDto updateStoppedSessions(CarChargingDetailsDto chargingSession);
+  void updateStoppedSessions(CarChargingDetailsDto chargingSession);
 
   /**
    * Method to get count of ongoing sessions in last 1min
+   *
    * @return count - long - count of ongoing sessions in last 1min
    */
   long getInProgressSessionCount();
 
   /**
    * Method to get count of stopped/terminated sessions in last 1min
+   *
    * @return count - long - count of stopped/terminated sessions in last 1min
    */
   long getStoppedSessionCount();
