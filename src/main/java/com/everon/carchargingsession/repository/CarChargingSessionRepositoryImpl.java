@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+/** Class containing methods to save and search objects in the cache */
 @Repository
 public class CarChargingSessionRepositoryImpl implements CarChargingSessionRepository {
   private final Map<UUID, CarChargingDetailsDto> chargingSessions;

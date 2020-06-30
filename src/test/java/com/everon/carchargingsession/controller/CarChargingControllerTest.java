@@ -5,12 +5,15 @@ import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.dto.StatusEnum;
 import com.everon.carchargingsession.exception.CarChargingBusinessException;
 import com.everon.carchargingsession.service.CarChargingService;
+import com.everon.carchargingsession.util.HelperUtil;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -35,17 +38,20 @@ public class CarChargingControllerTest {
   @Test
   public void testSubmitNewChargingSession() throws CarChargingBusinessException, Exception {
     // Arrange
-    String stationId = "ABC-12345";
-    CarChargingDetailsDto carChargingDetailsDto = prepareInput();
+    CarChargingDetailsDto carChargingDetailsDto =
+        HelperUtil.prepareChargingSessionDetailsInput("ABC-12345");
+    Gson gson = new Gson();
 
-    given(carChargingService.submitNewChargingSession(stationId)).willReturn(carChargingDetailsDto);
+    given(carChargingService.submitNewChargingSession("ABC-12345"))
+        .willReturn(carChargingDetailsDto);
     // Act
     mockMvc
-        .perform(post("/chargingSessions").content(stationId))
+        .perform(
+            post("/chargingSessions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson("ABC-12345")))
         // Assert
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.stationId").value("ABC-12345"))
-        .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+        .andExpect(status().isCreated());
   }
 
   @DisplayName("Test method to stop charging Session")

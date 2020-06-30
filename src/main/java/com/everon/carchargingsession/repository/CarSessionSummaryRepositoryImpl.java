@@ -7,7 +7,7 @@ import com.google.common.cache.Cache;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
-
+/** Interface class containing methods to add charging sessions to the guava cache */
 @Repository
 public class CarSessionSummaryRepositoryImpl implements CarSessionSummaryRepository {
   private final Cache<UUID, CarChargingDetailsDto> inProgressSessions;
@@ -19,18 +19,22 @@ public class CarSessionSummaryRepositoryImpl implements CarSessionSummaryReposit
   }
 
   @Override
-  public void updateInProgressSessions(final CarChargingDetailsDto chargingSession) {
+  public CarChargingDetailsDto updateInProgressSessions(
+      final CarChargingDetailsDto chargingSession) {
 
     if (StatusEnum.IN_PROGRESS.equals(chargingSession.getStatus())) {
       inProgressSessions.put(chargingSession.getId(), chargingSession);
     }
+    return chargingSession;
   }
 
   @Override
-  public void updateStoppedSessions(final CarChargingDetailsDto chargingSession) {
+  public CarChargingDetailsDto updateStoppedSessions(final CarChargingDetailsDto chargingSession) {
 
     inProgressSessions.invalidate(chargingSession.getId());
     stoppedSessions.put(chargingSession.getId(), chargingSession);
+
+    return chargingSession;
   }
 
   @Override
@@ -42,7 +46,6 @@ public class CarSessionSummaryRepositoryImpl implements CarSessionSummaryReposit
 
   @Override
   public long getStoppedSessionCount() {
-
     stoppedSessions.cleanUp();
     return stoppedSessions.size();
   }

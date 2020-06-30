@@ -2,7 +2,6 @@ package com.everon.carchargingsession.dto;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Map;
 import java.util.UUID;
