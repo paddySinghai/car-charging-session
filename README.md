@@ -18,10 +18,11 @@ Clone the git repository in a local directory using git clone<repository_name> c
 
 
 ### Deployment on Local Machine
-1. Build the jar file using the command: mvn clean install.
-2.
+1. Run the application using <b>docker-compose up --build.</b> 
+2. Swagger UI URL: http://localhost:9000/swagger-ui.html 
 3. Submit a new charging session for the station:: Request Type: POST || URL: http://localhost:9000/chargingSessions
 4. Stop charging session:: Request Type: PUT || URL: http://localhost:9000/chargingSessions/{id}
-5. Retrieve all charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions
-6. Swagger UI URL: http://localhost:9000/swagger-ui.html
+5. Retrieve all charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions 
+6. Retrieve a summary of submitted charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions/summary 
 7. Prometheus URL: http://localhost:9000/actuator/prometheus 
+8. Stop the application and clean-up using <b>docker-compose down -v --rmi all --remove-orphans</b>
