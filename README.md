@@ -18,10 +18,10 @@ Clone the git repository in a local directory using git clone<repository_name> c
 
 
 ### Deployment on Local Machine
-1. Run the application using <b>docker-compose up --build.<b> 
+1. Run the application using <b>docker-compose up --build.</b> 
 2. Submit a new charging session for the station:: Request Type: POST || URL: http://localhost:9000/chargingSessions
 3. Stop charging session:: Request Type: PUT || URL: http://localhost:9000/chargingSessions/{id}
 4. Retrieve all charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions
 5. Swagger UI URL: http://localhost:9000/swagger-ui.html
 6. Prometheus URL: http://localhost:9000/actuator/prometheus 
-7. Stop the application and clean-up using <b>docker-compose down -v --rmi all --remove-orphans<b>
+7. Stop the application and clean-up using <b>docker-compose down -v --rmi all --remove-orphans</b>
