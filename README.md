@@ -23,6 +23,6 @@ Clone the git repository in a local directory using git clone<repository_name> c
 3. Submit a new charging session for the station:: Request Type: POST || URL: http://localhost:9000/chargingSessions
 4. Stop charging session:: Request Type: PUT || URL: http://localhost:9000/chargingSessions/{id}
 5. Retrieve all charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions 
-6. Retrieve a summary of ubmitted charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions/summary 
+6. Retrieve a summary of submitted charging sessions:: Request Type: GET || URL: http://localhost:9000/chargingSessions/summary 
 7. Prometheus URL: http://localhost:9000/actuator/prometheus 
 8. Stop the application and clean-up using <b>docker-compose down -v --rmi all --remove-orphans</b>
