@@ -3,10 +3,8 @@ package com.everon.carchargingsession.controller;
 import com.everon.carchargingsession.dto.CarChargingDetailsDto;
 import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.dto.StatusEnum;
-import com.everon.carchargingsession.exception.CarChargingBusinessException;
 import com.everon.carchargingsession.service.CarChargingService;
 import com.everon.carchargingsession.util.HelperUtil;
-import com.google.gson.Gson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,29 +33,29 @@ public class CarChargingControllerTest {
 
   @DisplayName("Test method to submit a new charging session")
   @Test
-  public void testSubmitNewChargingSession() throws CarChargingBusinessException, Exception {
+  public void testSubmitNewChargingSession() throws Exception {
     // Arrange
     CarChargingDetailsDto carChargingDetailsDto =
         HelperUtil.prepareChargingSessionDetailsInput("ABC-12345");
-    Gson gson = new Gson();
 
     given(carChargingService.submitNewChargingSession("ABC-12345"))
         .willReturn(carChargingDetailsDto);
     // Act
     mockMvc
         .perform(
-            post("/chargingSessions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson("ABC-12345")))
+            post("/chargingSessions").contentType(MediaType.APPLICATION_JSON).content("ABC-12345"))
         // Assert
-        .andExpect(status().isCreated());
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.stationId").value("ABC-12345"))
+        .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
   }
 
   @DisplayName("Test method to stop charging Session")
   @Test
   public void testStopChargingSession() throws Exception {
     // Arrange
-    CarChargingDetailsDto carChargingDetailsDto = prepareInput();
+    CarChargingDetailsDto carChargingDetailsDto =
+        HelperUtil.prepareChargingSessionDetailsInput("ABC-12345");
     carChargingDetailsDto.setStatus(StatusEnum.FINISHED);
     given(
             carChargingService.stopChargingSession(
@@ -70,7 +67,6 @@ public class CarChargingControllerTest {
         // Assert
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.stationId").value("ABC-12345"))
-        .andExpect(jsonPath("$.id").value("d9bb7458-d5d9-4de7-87f7-7f39edd51d18"))
         .andExpect(jsonPath("$.status").value("FINISHED"));
   }
 
@@ -78,7 +74,9 @@ public class CarChargingControllerTest {
   @Test
   public void testRetrieveAllChargingSession() throws Exception {
     // Arrange
-    CarChargingDetailsDto carChargingDetailsDto = prepareInput();
+    CarChargingDetailsDto carChargingDetailsDto =
+        HelperUtil.prepareChargingSessionDetailsInput("ABC-12345");
+
     List<CarChargingDetailsDto> carChargingDetailsDtoList = new ArrayList<>();
     carChargingDetailsDtoList.add(carChargingDetailsDto);
     given(carChargingService.retrieveAllChargingSession()).willReturn(carChargingDetailsDtoList);
@@ -103,16 +101,5 @@ public class CarChargingControllerTest {
         .andExpect(jsonPath("$.startedCount").value(3))
         .andExpect(jsonPath("$.stoppedCount").value(2))
         .andExpect(status().isOk());
-  }
-
-  @DisplayName("Method to prepare Input")
-  public CarChargingDetailsDto prepareInput() {
-    return CarChargingDetailsDto.builder()
-        .id(UUID.fromString("d9bb7458-d5d9-4de7-87f7-7f39edd51d18"))
-        .stationId("ABC-12345")
-        .startedAt(LocalDateTime.parse("2019-05-06T19:00:20.529"))
-        .stoppedAt(LocalDateTime.parse("2019-05-06T21:17:01.198"))
-        .status(StatusEnum.IN_PROGRESS)
-        .build();
   }
 }
