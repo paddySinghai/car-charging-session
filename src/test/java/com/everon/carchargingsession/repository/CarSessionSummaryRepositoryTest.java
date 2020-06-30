@@ -33,6 +33,7 @@ public class CarSessionSummaryRepositoryTest {
     carSessionSummaryRepository.updateInProgressSessions(expected);
     // Assert
     Assertions.assertNotNull(expected);
+    Assertions.assertTrue(AppCache.getAppCache().getInProgressSessions().asMap().containsKey(expected.getId()));
   }
 
   @DisplayName("Test method to Update stopped/terminated sessions in the Cache")
@@ -46,6 +47,7 @@ public class CarSessionSummaryRepositoryTest {
     carSessionSummaryRepository.updateStoppedSessions(expected);
     // Assert
     Assertions.assertNotNull(expected);
+    Assertions.assertTrue(AppCache.getAppCache().getStoppedSessions().asMap().containsKey(expected.getId()));
   }
 
   @DisplayName("Test method to fetch the count of ongoing sessions in the past one minute")
