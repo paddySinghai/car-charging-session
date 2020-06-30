@@ -4,7 +4,7 @@ import com.everon.carchargingsession.dto.CarChargingDetailsDto;
 import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.exception.CarChargingBusinessException;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -20,7 +20,7 @@ public interface CarChargingService {
    *     containing charging session details
    * @throws CarChargingBusinessException throws CarChargingBusinessException
    */
-  public CarChargingDetailsDto submitNewChargingSession(String stationId)
+  CarChargingDetailsDto submitNewChargingSession(String stationId)
       throws CarChargingBusinessException;
 
   /**
@@ -31,16 +31,16 @@ public interface CarChargingService {
    *     containing updated Status of charging session
    * @throws CarChargingBusinessException throws link CarChargingBusinessException
    */
-  public CarChargingDetailsDto stopChargingSession(UUID id) throws CarChargingBusinessException;
+  CarChargingDetailsDto stopChargingSession(UUID id) throws CarChargingBusinessException;
 
   /**
    * Method to Retrieve all charging sessions
    *
-   * @return carChargingDetailsList - List<CarChargingDetailsDto> - List of All the charging
-   *     sessions with details
+   * @return carChargingDetailsList - Collection&lt;CarChargingDetailsDto&gt; - List of All the
+   *     charging sessions with details
    * @throws CarChargingBusinessException throws CarChargingBusinessException
    */
-  public List<CarChargingDetailsDto> retrieveAllChargingSession()
+  Collection<CarChargingDetailsDto> retrieveAllChargingSession()
       throws CarChargingBusinessException;
 
   /**
@@ -49,6 +49,5 @@ public interface CarChargingService {
    * @return carChargingSummaryDto - CarChargingSummaryDto - summary of Submitted charging sessions
    * @throws CarChargingBusinessException throws CarChargingBusinessException
    */
-  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
-      throws CarChargingBusinessException;
+  CarChargingSummaryDto retrieveSummaryOfChargingSession() throws CarChargingBusinessException;
 }

@@ -1,22 +1,34 @@
 package com.everon.carchargingsession.dto;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import org.springframework.scheduling.annotation.Scheduled;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /** In-Memory Cache Object for Storing Car charging sessions details */
-public class AppCache {
+public final class AppCache {
+  private static final AppCache appCache = new AppCache();
+  private final Cache<UUID, CarChargingDetailsDto> inProgressSessions;
+  private final Cache<UUID, CarChargingDetailsDto> stoppedSessions;
+  private final Map<UUID, CarChargingDetailsDto> carChargingDetailsMap;
 
-  private Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = new ConcurrentHashMap<>();
+  private AppCache() {
+    carChargingDetailsMap = new ConcurrentHashMap<>();
+    inProgressSessions = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+    stoppedSessions = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+  }
 
-  private static  AppCache appCache;
-
-  private AppCache() {}
+  public void clearCache(Map<UUID, CarChargingDetailsDto> carChargingDetailsMap) {
+    synchronized (carChargingDetailsMap) {
+      carChargingDetailsMap.clear();
+    }
+  }
 
   public static AppCache getAppCache() {
-    if (null == appCache) {
-      return appCache = new AppCache();
-    }
     return appCache;
   }
 
@@ -24,7 +36,11 @@ public class AppCache {
     return carChargingDetailsMap;
   }
 
-  public void setCarChargingDetailsMap(Map<UUID, CarChargingDetailsDto> carChargingDetailsMap) {
-    this.carChargingDetailsMap = carChargingDetailsMap;
+  public Cache<UUID, CarChargingDetailsDto> getInProgressSessions() {
+    return inProgressSessions;
+  }
+
+  public Cache<UUID, CarChargingDetailsDto> getStoppedSessions() {
+    return stoppedSessions;
   }
 }

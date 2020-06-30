@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarChargingBusinessException extends ExceptionInInitializerError {
+public class CarChargingBusinessException extends Exception {
   private String errorCode;
   private String errorMessage;
 }

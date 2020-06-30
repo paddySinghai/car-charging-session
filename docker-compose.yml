@@ -1,15 +1,7 @@
-version: "3.7"
-networks:
-  car-charging-session:
+version: "3.8"
 services:
-  car-charging-session:
-    container_name: car-charging-session
+  myservice:
     image: car-charging-session:0.0.1
-    build:
-      context: ./car-charging-session/
-      dockerfile: Dockerfile
-    ports:
-      - 9000:80
-    networks:
-      - car-charging-session
+     
+      
 

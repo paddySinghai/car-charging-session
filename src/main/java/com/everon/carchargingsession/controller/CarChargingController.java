@@ -6,10 +6,11 @@ import com.everon.carchargingsession.exception.CarChargingBusinessException;
 import com.everon.carchargingsession.service.CarChargingService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +26,9 @@ public class CarChargingController {
 
   @ApiOperation(value = "Submit a new charging session for the station")
   @PostMapping(
-      headers = "Accept=application/json",
+      consumes = {MediaType.APPLICATION_JSON_VALUE},
       produces = {MediaType.APPLICATION_JSON_VALUE})
+  @ResponseStatus(HttpStatus.CREATED)
   public CarChargingDetailsDto submitNewChargingSession(@RequestBody String stationId)
       throws CarChargingBusinessException {
     return carChargingService.submitNewChargingSession(stationId);
@@ -35,7 +37,6 @@ public class CarChargingController {
   @ApiOperation(value = "Stop charging session")
   @PutMapping(
       value = "/{id}",
-      headers = "Accept=application/json",
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public CarChargingDetailsDto stopChargingSession(@PathVariable UUID id)
       throws CarChargingBusinessException {
@@ -43,10 +44,8 @@ public class CarChargingController {
   }
 
   @ApiOperation(value = "Retrieve all charging sessions")
-  @GetMapping(
-      headers = "Accept=application/json",
-      produces = {MediaType.APPLICATION_JSON_VALUE})
-  public List<CarChargingDetailsDto> retrieveAllChargingSession()
+  @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+  public Collection<CarChargingDetailsDto> retrieveAllChargingSession()
       throws CarChargingBusinessException {
     return carChargingService.retrieveAllChargingSession();
   }
@@ -54,7 +53,6 @@ public class CarChargingController {
   @ApiOperation(value = "Retrieve summary of submitted charging sessions")
   @GetMapping(
       value = "/summary",
-      headers = "Accept=application/json",
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public CarChargingSummaryDto retrieveSummaryOfChargingSession()
       throws CarChargingBusinessException {

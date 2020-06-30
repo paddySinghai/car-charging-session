@@ -1,18 +1,18 @@
 package com.everon.carchargingsession.service;
 
-import com.everon.carchargingsession.dto.AppCache;
 import com.everon.carchargingsession.dto.CarChargingDetailsDto;
 import com.everon.carchargingsession.dto.CarChargingSummaryDto;
 import com.everon.carchargingsession.dto.StatusEnum;
 import com.everon.carchargingsession.exception.CarChargingBusinessException;
+import com.everon.carchargingsession.repository.CarChargingSessionRepository;
+import com.everon.carchargingsession.repository.CarSessionSummaryRepository;
 import com.everon.carchargingsession.util.HelperUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for CarChargingService Interface containing methods to start,stop,retrieve
@@ -20,73 +20,65 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CarChargingServiceImpl implements CarChargingService {
-  AppCache appCache = AppCache.getAppCache();
+  private final CarChargingSessionRepository carChargingSessionRepository;
+  private final CarSessionSummaryRepository carSessionSummaryRepository;
+
+  public CarChargingServiceImpl(
+      CarChargingSessionRepository carChargingSessionRepository,
+      CarSessionSummaryRepository carSessionSummaryRepository) {
+    this.carChargingSessionRepository = carChargingSessionRepository;
+    this.carSessionSummaryRepository = carSessionSummaryRepository;
+  }
 
   @Override
-  public CarChargingDetailsDto submitNewChargingSession(String stationId)
-      throws CarChargingBusinessException {
-
-    Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
+  public CarChargingDetailsDto submitNewChargingSession(String stationId) {
     CarChargingDetailsDto carChargingDetailsDto =
         HelperUtil.prepareChargingSessionDetailsInput(stationId);
-
-    carChargingDetailsMap.put(carChargingDetailsDto.getId(), carChargingDetailsDto);
-
-    return carChargingDetailsDto;
+    carSessionSummaryRepository.updateInProgressSessions(carChargingDetailsDto);
+    return carChargingSessionRepository.save(carChargingDetailsDto);
   }
 
   @Override
   public CarChargingDetailsDto stopChargingSession(UUID id) throws CarChargingBusinessException {
 
-    Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
+    Optional<CarChargingDetailsDto> carChargingDetailsDto =
+        carChargingSessionRepository.findById(id);
+    carChargingDetailsDto.orElseThrow(
+        () ->
+            new CarChargingBusinessException(
+                "SESSION_NOT_FOUND", "No Active session found for id: " + id));
 
-    if (!carChargingDetailsMap.containsKey(id)) {
-      throw new CarChargingBusinessException(
-          "SESSION_NOT_FOUND", "No Active session found for id: " + id);
-    }
-    CarChargingDetailsDto carChargingDetailsDto = carChargingDetailsMap.get(id);
-    if (null != carChargingDetailsDto
-        && StatusEnum.FINISHED.equals(carChargingDetailsDto.getStatus())) {
+    if (!StatusEnum.IN_PROGRESS.equals(carChargingDetailsDto.get().getStatus())) {
       throw new CarChargingBusinessException(
           "SESSION_ALREADY_TERMINATED", "Session already Terminated for id: " + id);
     }
-    carChargingDetailsDto.setStatus(StatusEnum.FINISHED);
-    carChargingDetailsDto.setStoppedAt(LocalDateTime.now());
 
-    appCache.getCarChargingDetailsMap().replace(id, carChargingDetailsDto);
-    return carChargingDetailsDto;
+    carChargingDetailsDto.get().setStatus(StatusEnum.FINISHED);
+    carChargingDetailsDto.get().setStoppedAt(LocalDateTime.now());
+
+    carSessionSummaryRepository.updateStoppedSessions(carChargingDetailsDto.get());
+    carChargingSessionRepository.save(carChargingDetailsDto.get());
+
+    return carChargingDetailsDto.get();
   }
 
   @Override
-  public List<CarChargingDetailsDto> retrieveAllChargingSession()
-      throws CarChargingBusinessException {
-    Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
-    if (null == carChargingDetailsMap || carChargingDetailsMap.isEmpty()) {
-      throw new CarChargingBusinessException("NO_SUBMITTED_SESSIONS", "No sessions found!");
-    }
-    List<CarChargingDetailsDto> chargingDetailsDtoList =
-        carChargingDetailsMap.values().stream().collect(Collectors.toList());
-    return chargingDetailsDtoList;
+  public Collection<CarChargingDetailsDto> retrieveAllChargingSession() {
+
+    return carChargingSessionRepository.findAll();
   }
 
-  @Override  public CarChargingSummaryDto retrieveSummaryOfChargingSession()
-      throws CarChargingBusinessException {
-    Map<UUID, CarChargingDetailsDto> carChargingDetailsMap = appCache.getCarChargingDetailsMap();
-    if (null == carChargingDetailsMap || carChargingDetailsMap.isEmpty()) {
-      throw new CarChargingBusinessException("NO_SUBMITTED_SESSIONS", "No sessions found!");
-    }
+  @Override
+  public CarChargingSummaryDto retrieveSummaryOfChargingSession() {
 
-    long totalCount = carChargingDetailsMap.size();
-    long stoppedCount =
-        carChargingDetailsMap.entrySet().stream()
-            .filter(x -> x.getValue().getStatus().equals(StatusEnum.FINISHED))
-            .count();
+    long inProgressSessionCount = carSessionSummaryRepository.getInProgressSessionCount();
+    long stoppedCount = carSessionSummaryRepository.getStoppedSessionCount();
 
     CarChargingSummaryDto carChargingSummaryDto =
         CarChargingSummaryDto.builder()
-            .totalCount(totalCount)
+            .totalCount(inProgressSessionCount + stoppedCount)
             .stoppedCount(stoppedCount)
-            .startedCount(totalCount - stoppedCount)
+            .startedCount(inProgressSessionCount)
             .build();
     return carChargingSummaryDto;
   }

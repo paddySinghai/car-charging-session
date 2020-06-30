@@ -16,13 +16,11 @@ public class HelperUtil {
    *     charging session
    */
   public static CarChargingDetailsDto prepareChargingSessionDetailsInput(String stationId) {
-    CarChargingDetailsDto carChargingDetailsDto =
-        CarChargingDetailsDto.builder()
-            .id(UUID.randomUUID())
-            .stationId(stationId)
-            .startedAt(LocalDateTime.now())
-            .status(StatusEnum.IN_PROGRESS)
-            .build();
-    return carChargingDetailsDto;
+    return CarChargingDetailsDto.builder()
+        .id(UUID.randomUUID())
+        .stationId(stationId)
+        .startedAt(LocalDateTime.now())
+        .status(StatusEnum.IN_PROGRESS)
+        .build();
   }
 }
